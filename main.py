@@ -3,16 +3,13 @@ import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from aiogram import Bot, Dispatcher, types
-from dotenv import load_dotenv
+from config import bot
+
 
 from database.models import engine, Base
-from database.requests import get_all_users
 from handlers import main_router
 from ApiHandlers import api_router
 
-load_dotenv()
-
-bot = Bot(token=os.getenv("BOT_TOKEN"))
 dp = Dispatcher()
 app = FastAPI()
 
@@ -21,7 +18,6 @@ app = FastAPI()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Проверяем, не подключен ли роутер уже (защита от дублей при reload)
     if main_router not in dp.sub_routers:
         dp.include_router(main_router)
         logging.info("Main router included")
